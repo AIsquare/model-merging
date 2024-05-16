@@ -25,7 +25,8 @@ Perhaps the most remarkable finding is the application of task vector combinatio
 ![](taskarth.PNG)
 
 
-Firstly, we define $\mathbf{w}_{\text{pre}}$ as the weights of a pre-trained model, and $\mathbf{w}_{\text{ft}}$ as the corresponding weights after fine-tuning on task $t$. The task vector $\mathbf{v}_t$ is essentially the difference between these two sets of weights, calculated element-wise: $\mathbf{v}_t = \mathbf{w}_{\text{ft}} - \mathbf{w}_{\text{pre}}$.
+Firstly, we define `$\mathbf{w}_{\text{pre}}$` as the weights of a pre-trained model, and `$\mathbf{w}_{\text{ft}}$` as the corresponding weights after fine-tuning on task `$t$`. The task vector `$\mathbf{v}_t$` is essentially the difference between these two sets of weights, calculated element-wise: `$\mathbf{v}_t = \mathbf{w}_{\text{ft}} - \mathbf{w}_{\text{pre}}$`.
+
 
 
 Now, the interesting part is how these task vectors can be applied to other model parameters $\mathbf{w}$ of the same architecture. This is achieved through element-wise addition, with an optional scaling factor $\lambda$, resulting in a new set of weights $\mathbf{w}_{\text{new}} = \mathbf{w} + \lambda \mathbf{v}$.
