@@ -32,11 +32,12 @@ Now, the interesting part is how these task vectors can be applied to other mode
 
 ### **TIES-MERGING (TRIM, ELECT SIGN & MERGE):** Introduces three novel approaches to solve these problems.
 
-1. **Trim:** For each task \( t \), we trim the redundant parameters from the task vector $\tau_t$ to create $\hat{\tau}_t$
+1. **Trim:** For each task $( t )$, we trim the redundant parameters from the task vector $\tau_t$ to create $\hat{\tau}_t$
  by keeping the top-\( k \)% values according to their magnitude and trimming the bottom \( 100 - k \)% of the redundant parameters by resetting them to 0. This can be decomposed further as $\tau_t = \hat{\gamma}_t \odot \hat{\mu}_t$
  .
 
-2. **Elect:**Next, we create an aggregate elected sign vector $ \gamma_m \ $for the merged model that resolves the disagreements in the sign for each parameter \( p \) across different models. To create the elected sign vector, we choose the sign with the highest total magnitude across all relevant models. For each parameter p∈{1,2,...,d}, we separate the values ${\hat{\tau}_{p}^{t}}_{n_{t}} = 1$ based on their sign $(+1) or (-1)$ and take their sum to calculate the total mass (i.e., total magnitude) in the positive and negative direction. We then assign $( \gamma_{pm} )$ as the sign with greater total movement. This can be efficiently computed using $( \gamma_{pm} = \text{sgn}\left(\sum_{t=1}^n \hat{\tau}^p_t\right) )$.
+2. **Elect:**Next, we create an aggregate elected sign vector $ (\gamma_m )$ for the merged model that resolves the disagreements in the sign for each parameter $( p )$ across different models. To create the elected sign vector, we choose the sign with the highest total magnitude across all relevant models. For each parameter $p \in \{1, 2, \ldots, d\}$
+, we separate the values ${\hat{\tau}_{p}^{t}}_{n_{t}} = 1$ based on their sign $(+1) or (-1)$ and take their sum to calculate the total mass (i.e., total magnitude) in the positive and negative direction. We then assign $( \gamma_{pm} )$ as the sign with greater total movement. This can be efficiently computed using $( \gamma_{pm} = \text{sgn}\left(\sum_{t=1}^n \hat{\tau}^p_t\right) )$.
 
 
 3. **Disjoint Merge:** Then, for each parameter $( p )$, we compute a disjoint mean by only keeping the parameter values from the models whose signs are the same as the aggregated elected sign and calculate their mean. Formally, let $( A_p = \{t \in [n] \,|\, \hat{\gamma}^p_t = \gamma_{pm}\} )$, then $( \tau_{pm} = \frac{1}{|A_p|} \sum_{t \in A_p} \hat{\tau}^p_t )$. Note that the disjoint mean always ignores the zero values.
