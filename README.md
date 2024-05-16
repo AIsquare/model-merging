@@ -40,7 +40,6 @@ Now, the interesting part is how these task vectors can be applied to other mode
 
 Given the final merged task vector \( \tau_m \), we scale it and add it to the initial parameter values to obtain the merged model parameters \( \theta_m \) as \( \theta_m = \theta_{\text{init}} + \lambda \cdot \tau_m \), where \( \lambda \) is a scaling hyperparameter.
 
-
 >Depiction of steps involved.
 
 ![](TIES.PNG)
