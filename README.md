@@ -1,0 +1,68 @@
+# Model Merging 
+Model merging is a technique that combines two or more LLMs into one model.
+
+>It’s feasible to merge models with mixing architectures, for example: LLaMA 2 + Mistral + Wizard.
+
+- We can pick the best of both worlds say computer vision and NLP and merge into one. It saves a lot of time instead creating a different architecture for each use case, you only have
+to maintain one.
+## Merge Algorithm
+### 1. EDITING MODELS WITH TASK ARITHMETIC 
+- Negating a task vector
+  - Forgetting via negation  $\tau_{\text{new}} = -\tau$ corresponds to extrapolating
+between the fine-tuned model and the pre-trained model.
+- Adding a task vector
+  - $\tau_{\text{new}} = \sum_{i} \tau_i$ results in a multi-task model proficient in all tasks, sometimes even
+with gains over models fine-tuned on individual tasks.
+- Combining a task vector
+
+This study dives deep into the intricate workings of task vectors within pre-trained models, shedding light on their potential to steer model behavior effectively. By constructing task vectors through the contrast of pre- and post-fine-tuning model weights, the research unveils a powerful mechanism for task optimization.
+
+One of the most intriguing aspects is how arithmetic operations like negation and addition can manipulate these task vectors, directly influencing task performance. The revelation that negating a task vector decreases performance while leaving control tasks relatively unaffected highlights the precision with which these vectors can be tuned.
+
+Even more exciting is the discovery that combining task vectors through addition can lead to enhanced performance across multiple tasks simultaneously. This not only underscores the versatility of task vectors but also hints at the possibility of more efficient multitask learning strategies.
+
+Perhaps the most remarkable finding is the application of task vector combinations in tasks linked by analogy relationships. The ability to leverage task vectors from related tasks to improve performance on a fourth task, without any direct training data, opens up a realm of possibilities for transfer learning and generalization.
+![](taskarth.PNG)
+
+
+Firstly, we define $\mathbf{w}_{\text{pre}}$ as the weights of a pre-trained model, and $\mathbf{w}_{\text{ft}}$ as the corresponding weights after fine-tuning on task $t$. The task vector $\mathbf{v}_t$ is essentially the difference between these two sets of weights, calculated element-wise: $\mathbf{v}_t = \mathbf{w}_{\text{ft}} - \mathbf{w}_{\text{pre}}$.
+
+Now, the interesting part is how these task vectors can be applied to other model parameters $\mathbf{w}$ of the same architecture. This is achieved through element-wise addition, with an optional scaling factor $\lambda$, resulting in a new set of weights $\mathbf{w}_{\text{new}} = \mathbf{w} + \lambda \mathbf{v}$.
+### TIES-MERGING: Resolving Interference When Merging Models
+In current merging techniques, there's a common oversight regarding the interaction among parameters from different models. This often leads to significant performance degradation when merging multiple models. There are primarily two key sources of this interference:
+
+(a) Redundancy in parameter values: This occurs when parameters from different models contain redundant information, leading to inefficiencies in the merged model.
+
+(b) Disagreement on parameter signs: Sometimes, parameters across models don't align in terms of their sign values, causing conflicts that affect the overall performance of the merged model.
+
+TIES-MERGING (TRIM, ELECT SIGN & MERGE): Introduces three novel approach to solve these problems.
+1. **Trim:** For each task \( t \), we trim the redundant parameters from the task vector \( \tau_t \) to create \( \hat{\tau}_t \) by keeping the top-\( k \)% values according to their magnitude and trimming the bottom \( 100 - k \)% of the redundant parameters by resetting them to 0. This can be decomposed further as \( \hat{\tau}_t = \hat{\gamma}_t \odot \hat{\mu}_t \).
+
+2. **Elect:** Next, we create an aggregate elected sign vector \( \gamma_m \) for the merged model that resolves the disagreements in the sign for each parameter \( p \) across different models. To create the elected sign vector, we choose the sign with the highest total magnitude across all relevant models. For each parameter \( p \in \{1, 2, ..., d\} \), we separate the values \( \{\hat{\tau}^p_t\}_{t=1}^n \) based on their sign (\(+1\) or \(-1\)) and take their sum to calculate the total mass (i.e., total magnitude) in the positive and negative direction. We then assign \( \gamma_{pm} \) as the sign with greater total movement. This can be efficiently computed using \( \gamma_{pm} = \text{sgn}\left(\sum_{t=1}^n \hat{\tau}^p_t\right) \).
+
+3. **Disjoint Merge:** Then, for each parameter \( p \), we compute a disjoint mean by only keeping the parameter values from the models whose signs are the same as the aggregated elected sign and calculate their mean. Formally, let \( A_p = \{t \in [n] \,|\, \hat{\gamma}^p_t = \gamma_{pm}\} \), then \( \tau_{pm} = \frac{1}{|A_p|} \sum_{t \in A_p} \hat{\tau}^p_t \). Note that the disjoint mean always ignores the zero values.
+
+Given the final merged task vector \( \tau_m \), we scale it and add it to the initial parameter values to obtain the merged model parameters \( \theta_m \) as \( \theta_m = \theta_{\text{init}} + \lambda \cdot \tau_m \), where \( \lambda \) is a scaling hyperparameter.
+
+>Depiction of steps involved.
+
+![](TIES.PNG)
+### INTERFERENCE FROM REDUNDANT PARAMETERS
+- However, when merging
+a parameter that is influential for one model but redundant
+(i.e. not influential) for other models, the
+influential value may be obscured by the redundant
+values, lowering the overall model performance
+- INTERFERENCE FROM SIGN DISAGREEMENT: A given parameter might have a positive
+value for some models and a negative value for others. Consequently, employing simple averaging
+might compromise the performance on both tasks.
+![](conflict.PNG)
+
+- SLERP
+- TIES
+- DARE
+- Passthrough
+
+Define each Algorithm and add paper
+
+![img.png](https://arxiv.org/html/2403.13257v1/extracted/5482855/figures/model_merging_classification.png)
