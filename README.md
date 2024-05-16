@@ -24,8 +24,7 @@ Even more exciting is the discovery that combining task vectors through addition
 Perhaps the most remarkable finding is the application of task vector combinations in tasks linked by analogy relationships. The ability to leverage task vectors from related tasks to improve performance on a fourth task, without any direct training data, opens up a realm of possibilities for transfer learning and generalization.
 ![](taskarth.PNG)
 
-
-Firstly, we define `$\mathbf{w}_{\text{pre}}$` as the weights of a pre-trained model, and `$\mathbf{w}_{\text{ft}}$` as the corresponding weights after fine-tuning on task `$t$`. The task vector `$\mathbf{v}_t$` is essentially the difference between these two sets of weights, calculated element-wise: `$\mathbf{v}_t = \mathbf{w}_{\text{ft}} - \mathbf{w}_{\text{pre}}$`.
+Firstly, we define **w<sub>pre</sub>** as the weights of a pre-trained model, and **w<sub>ft</sub>** as the corresponding weights after fine-tuning on task *t*. The task vector **v<sub>t</sub>** is essentially the difference between these two sets of weights, calculated element-wise: **v<sub>t</sub>** = **w<sub>ft</sub>** - **w<sub>pre</sub>**.
 
 
 
